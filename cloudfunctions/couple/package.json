@@ -1,0 +1,12 @@
+{
+  "name": "couple",
+  "version": "1.0.0",
+  "description": "情侣关系管理云函数",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "wx-server-sdk": "^3.0.1"
+  }
+}

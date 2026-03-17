@@ -1,0 +1,264 @@
+@import "@/assets/css/global.scss";
+
+.mine-container {
+  min-height: 100vh;
+  background: $background-gradient;
+  position: relative;
+  overflow-x: hidden;
+  padding-bottom: 40px;
+}
+
+.bg-decoration {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  .heart {
+    position: absolute;
+    font-size: 24px;
+    opacity: 0.3;
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .heart-1 {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+  }
+
+  .heart-2 {
+    top: 20%;
+    right: 15%;
+    animation-delay: 2s;
+  }
+
+  .heart-3 {
+    top: 50%;
+    left: 8%;
+    animation-delay: 4s;
+  }
+
+  .heart-4 {
+    top: 70%;
+    right: 10%;
+    animation-delay: 6s;
+  }
+}
+
+.header {
+  position: relative;
+  z-index: 1;
+  padding: 20px 20px 10px;
+
+  .title-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .title-emoji {
+    font-size: 28px;
+    animation: heartBeat 2s ease-in-out infinite;
+  }
+
+  .title {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 8px rgba(255, 107, 157, 0.2);
+  }
+}
+
+.user-section {
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+}
+
+.user-card {
+  background: $background-card;
+  border-radius: $border-radius-xl;
+  padding: 24px;
+  box-shadow: $shadow-md;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 157, 192, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 107, 157, 0.1) 0%,
+      rgba(196, 69, 105, 0.05) 100%
+    );
+    border-radius: 0 $border-radius-xl 0 100px;
+  }
+}
+
+.avatar-container {
+  position: relative;
+  z-index: 1;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: $border-radius-full;
+  border: 3px solid rgba(255, 157, 192, 0.5);
+  box-shadow: 0 8px 24px rgba(255, 107, 157, 0.25);
+  background: #ffffff;
+}
+
+.avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: $border-radius-full;
+  background: linear-gradient(135deg, #fff5f7 0%, #ffe8ec 100%);
+  border: 3px solid rgba(255, 157, 192, 0.5);
+  box-shadow: 0 8px 24px rgba(255, 107, 157, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-emoji {
+  font-size: 40px;
+}
+
+.avatar-ring {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  border-radius: $border-radius-full;
+  background: linear-gradient(135deg, $primary-color, $primary-dark);
+  animation: ringPulse 2s ease-in-out infinite;
+  opacity: 0.4;
+}
+
+.user-info {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+}
+
+.user-phone {
+  display: block;
+  font-size: $font-size-xl;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.user-id {
+  display: block;
+  font-size: $font-size-sm;
+  color: $text-muted;
+}
+
+.action-section {
+  position: relative;
+  z-index: 1;
+  padding: 0 20px;
+  margin-bottom: 20px;
+}
+
+.action-btn {
+  width: 100%;
+  height: 56px;
+  font-size: $font-size-md;
+  font-weight: 600;
+  border-radius: $border-radius-lg;
+  transition: all $transition-normal;
+  box-sizing: border-box;
+}
+
+.action-btn.danger {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%) !important;
+  box-shadow: 0 4px 16px rgba(255, 107, 107, 0.4) !important;
+}
+
+.feature-section {
+  position: relative;
+  z-index: 1;
+  padding: 0 20px;
+}
+
+.feature-card {
+  background: $background-card;
+  border-radius: $border-radius-xl;
+  box-shadow: $shadow-md;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 157, 192, 0.3);
+  overflow: hidden;
+}
+
+.feature-cell {
+  border-bottom: 1px solid rgba(255, 157, 192, 0.15);
+  padding: 16px 20px;
+  transition: all $transition-normal;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: rgba(255, 107, 157, 0.05);
+  }
+}
+
+.cell-icon {
+  font-size: 24px;
+  margin-right: 12px;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) rotate(10deg) scale(1.1);
+    opacity: 0.5;
+  }
+}
+
+@keyframes heartBeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes ringPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.2;
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "beiwanglu",
+  "description": "our beiwanglu",
+  "appid": "wxf4f04dcce95d3a89",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false
+  },
+  "compileType": "miniprogram"
+}

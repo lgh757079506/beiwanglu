@@ -1,0 +1,770 @@
+@import "@/assets/css/global.scss";
+
+.memo-container {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px;
+  background: linear-gradient(
+    180deg,
+    #fff5f7 0%,
+    #ffe8ec 25%,
+    #ffdde4 50%,
+    #ffe8ec 75%,
+    #fff5f7 100%
+  );
+  min-height: 100vh;
+  box-sizing: border-box;
+  position: relative;
+  overflow-x: hidden;
+
+  // 背景爱心装饰
+  .bg-decoration {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+
+    .heart {
+      position: absolute;
+      font-size: 24px;
+      opacity: 0.3;
+      animation: float 8s ease-in-out infinite;
+
+      &.heart-1 {
+        top: 10%;
+        left: 10%;
+        animation-delay: 0s;
+      }
+
+      &.heart-2 {
+        top: 25%;
+        right: 15%;
+        animation-delay: 2s;
+      }
+
+      &.heart-3 {
+        top: 60%;
+        left: 20%;
+        animation-delay: 4s;
+      }
+
+      &.heart-4 {
+        top: 75%;
+        right: 10%;
+        animation-delay: 6s;
+      }
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg) scale(1);
+      opacity: 0.3;
+    }
+    50% {
+      transform: translateY(-20px) rotate(10deg) scale(1.1);
+      opacity: 0.5;
+    }
+  }
+
+  // 顶部标题区域
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+
+    .title-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 8px;
+
+      .title-emoji {
+        font-size: 28px;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .title {
+        font-size: 26px;
+        font-weight: 700;
+        background: linear-gradient(
+          135deg,
+          #ff6b9d 0%,
+          #c44569 50%,
+          #ff6b9d 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 2px 8px rgba(255, 107, 157, 0.2);
+        letter-spacing: 2px;
+      }
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #c44569;
+      opacity: 0.8;
+      font-weight: 500;
+    }
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+  }
+
+  // 情侣绑定区域
+  .couple-section {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 245, 247, 0.95) 100%
+    );
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(255, 107, 157, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 157, 192, 0.3);
+    position: relative;
+    z-index: 1;
+    animation: slideUp 0.6s ease-out;
+
+    // 未绑定状态
+    .couple-bind {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .bind-icon {
+        font-size: 36px;
+      }
+
+      .bind-content {
+        flex: 1;
+
+        .couple-label {
+          display: block;
+          font-size: 15px;
+          color: #c44569;
+          font-weight: 600;
+          margin-bottom: 10px;
+        }
+
+        .nut-input {
+          padding: 0 !important;
+          .nut-input-right-box {
+            margin: 0;
+          }
+        }
+
+        .input-wrapper {
+          display: flex;
+          gap: 10px;
+          align-items: center;
+
+          .couple-input {
+            flex: 1;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #fff 0%, #fff5f7 100%);
+            border: 1px solid rgba(255, 157, 192, 0.4);
+            padding: 0 16px;
+            font-size: 15px;
+
+            ::v-deep .nut-input-text {
+              color: #5a3d5c;
+            }
+
+            ::v-deep .nut-input-placeholder {
+              color: #d4a5b5;
+            }
+          }
+
+          .couple-btn {
+            height: 44px;
+            padding: 0 20px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+            transition: all 0.3s ease;
+
+            &:active {
+              transform: scale(0.95);
+              box-shadow: 0 2px 8px rgba(255, 107, 157, 0.3);
+            }
+          }
+        }
+      }
+    }
+
+    // 已绑定状态
+    .couple-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .couple-avatars {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .avatar {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #fff5f7 0%, #ffe8ec 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 28px;
+          border: 2px solid rgba(255, 157, 192, 0.5);
+          box-shadow: 0 4px 12px rgba(255, 107, 157, 0.2);
+        }
+
+        .love-icon {
+          font-size: 20px;
+          animation: heartBeat 1s ease-in-out infinite;
+        }
+      }
+
+      .couple-details {
+        flex: 1;
+
+        .couple-status {
+          display: block;
+          font-size: 13px;
+          color: #ff6b9d;
+          font-weight: 600;
+          margin-bottom: 4px;
+        }
+
+        .couple-phone {
+          background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+          border: none;
+          color: white;
+          padding: 4px 12px;
+          border-radius: 20px;
+          font-size: 13px;
+        }
+      }
+
+      .unbind-btn {
+        height: 36px;
+        padding: 0 16px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #fff 0%, #fff5f7 100%);
+        border: 1px solid rgba(255, 107, 157, 0.4);
+        color: #c44569;
+        font-weight: 500;
+        font-size: 13px;
+      }
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes heartBeat {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    14% {
+      transform: scale(1.3);
+    }
+    28% {
+      transform: scale(1);
+    }
+    42% {
+      transform: scale(1.3);
+    }
+    70% {
+      transform: scale(1);
+    }
+  }
+
+  // 添加按钮
+  .add-btn {
+    position: fixed;
+    right: 24px;
+    bottom: 100px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    animation: bounceIn 0.8s ease-out 0.3s both;
+
+    .add-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(
+        135deg,
+        #ff6b9d 0%,
+        #c44569 50%,
+        #ff6b9d 100%
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 28px rgba(255, 107, 157, 0.5);
+      position: relative;
+      transition: all 0.3s ease;
+
+      &::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: inherit;
+        animation: ripple 2s ease-out infinite;
+        z-index: -1;
+      }
+
+      .plus {
+        font-size: 36px;
+        color: white;
+        font-weight: 300;
+        line-height: 36px;
+      }
+
+      &:active {
+        transform: scale(0.9);
+        box-shadow: 0 4px 16px rgba(255, 107, 157, 0.4);
+      }
+    }
+
+    .add-label {
+      font-size: 12px;
+      color: #c44569;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 4px 12px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(255, 107, 157, 0.2);
+    }
+  }
+
+  @keyframes bounceIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes ripple {
+    0% {
+      transform: scale(1);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(1.8);
+      opacity: 0;
+    }
+  }
+
+  // 切换标签
+  .tabs-wrapper {
+    display: flex;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 245, 247, 0.95) 100%
+    );
+    border-radius: 16px;
+    padding: 6px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(255, 107, 157, 0.15);
+    border: 1px solid rgba(255, 157, 192, 0.3);
+    position: relative;
+    z-index: 1;
+    animation: slideUp 0.6s ease-out 0.1s both;
+
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      gap: 6px;
+
+      .tab-icon {
+        font-size: 22px;
+      }
+
+      .tab-text {
+        font-size: 14px;
+        color: #a87c8a;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      &.active {
+        background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+        box-shadow: 0 4px 16px rgba(255, 107, 157, 0.4);
+
+        .tab-text {
+          color: white;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .tab-divider {
+      width: 1px;
+      background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(255, 157, 192, 0.4) 50%,
+        transparent 100%
+      );
+      margin: 8px 0;
+    }
+  }
+
+  // 备忘录列表容器
+  .memo-list-wrapper {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    animation: slideUp 0.6s ease-out 0.2s both;
+    min-height: 400px;
+  }
+
+  // 弹窗样式
+  ::v-deep .memo-dialog {
+    .nut-dialog {
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(196, 69, 105, 0.3);
+      border: 1px solid rgba(255, 157, 192, 0.3);
+    }
+
+    .nut-dialog__header {
+      background: linear-gradient(135deg, #fff5f7 0%, #ffe8ec 100%);
+      border-bottom: 1px solid rgba(255, 157, 192, 0.3);
+      padding: 20px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #c44569;
+    }
+
+    .nut-dialog__footer {
+      padding: 16px 20px;
+      background: linear-gradient(135deg, #fff 0%, #fff5f7 100%);
+      border-top: 1px solid rgba(255, 157, 192, 0.2);
+    }
+  }
+
+  .form-item {
+    &:not(:first-child) {
+      margin-top: 20px;
+    }
+
+    ::v-deep .nut-form-item__label {
+      font-size: 15px;
+      color: #c44569;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .dialog-input,
+    .dialog-textarea {
+      ::v-deep .nut-input,
+      ::v-deep .nut-textarea {
+        background: linear-gradient(135deg, #fff 0%, #fff5f7 100%);
+        border: 1px solid rgba(255, 157, 192, 0.4);
+        border-radius: 12px;
+        padding: 14px 16px;
+      }
+
+      ::v-deep .nut-input-text,
+      ::v-deep .nut-textarea-inner {
+        color: #5a3d5c;
+        font-size: 15px;
+      }
+
+      ::v-deep .nut-input-placeholder {
+        color: #d4a5b5;
+      }
+    }
+
+    .date-cell {
+      background: linear-gradient(135deg, #fff 0%, #fff5f7 100%);
+      border: 1px solid rgba(255, 157, 192, 0.4);
+      border-radius: 12px;
+      padding: 14px 16px;
+
+      .cell-icon {
+        margin-right: 8px;
+      }
+
+      ::v-deep .nut-cell__title {
+        color: #5a3d5c;
+        font-size: 15px;
+      }
+    }
+
+    .type-selector {
+      display: flex;
+      gap: 12px;
+
+      .type-option {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 16px 12px;
+        background: linear-gradient(135deg, #fff 0%, #fff5f7 100%);
+        border: 2px solid rgba(255, 157, 192, 0.3);
+        border-radius: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        gap: 8px;
+
+        .type-icon {
+          font-size: 28px;
+        }
+
+        .type-text {
+          font-size: 14px;
+          color: #a87c8a;
+          font-weight: 500;
+          transition: all 0.3s ease;
+        }
+
+        &.active {
+          background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+          border-color: transparent;
+          box-shadow: 0 4px 16px rgba(255, 107, 157, 0.4);
+
+          .type-text {
+            color: white;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+
+  .dialog-btn {
+    height: 44px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+
+    &.cancel-btn {
+      background: linear-gradient(135deg, #fff 0%, #fff5f7 100%);
+      border: 1px solid rgba(255, 157, 192, 0.4);
+      color: #c44569;
+    }
+
+    &.confirm-btn {
+      background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+      border: none;
+      color: white;
+      box-shadow: 0 4px 16px rgba(255, 107, 157, 0.4);
+    }
+  }
+
+  // 日期选择器弹窗
+  .date-picker-popup {
+    ::v-deep .nut-popup {
+      border-radius: 24px 24px 0 0;
+      background: linear-gradient(180deg, #fff 0%, #fff5f7 100%);
+    }
+
+    .picker-header {
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 157, 192, 0.3);
+
+      .picker-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #c44569;
+      }
+    }
+
+    ::v-deep .nut-date-picker {
+      padding: 20px;
+    }
+  }
+
+  // 连续打卡奖励提示
+  .streak-reward {
+    position: relative;
+    z-index: 10;
+    background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 24px rgba(255, 107, 157, 0.4);
+    animation: rewardSlideIn 0.6s ease-out,
+      rewardPulse 2s ease-in-out 0.6s infinite;
+    text-align: center;
+
+    .streak-text {
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      text-shadow: 0 2px 4px rgba(196, 69, 105, 0.3);
+    }
+  }
+
+  @keyframes rewardSlideIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes rewardPulse {
+    0%,
+    100% {
+      transform: scale(1);
+      box-shadow: 0 8px 24px rgba(255, 107, 157, 0.4);
+    }
+    50% {
+      transform: scale(1.02);
+      box-shadow: 0 12px 32px rgba(255, 107, 157, 0.5);
+    }
+  }
+
+  // 心形爆炸动画容器
+  .heart-explosion-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .explosion-heart {
+    position: absolute;
+    font-size: 32px;
+    animation: explode 1.5s ease-out forwards;
+  }
+
+  @keyframes explode {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) scale(0.5);
+    }
+    50% {
+      opacity: 1;
+      transform: translate(var(--tx), var(--ty)) scale(1.2);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(calc(var(--tx) * 1.5), calc(var(--ty) * 1.5))
+        scale(0.3);
+    }
+  }
+
+  // 输入框小心心效果
+  .input-hearts-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9998;
+    pointer-events: none;
+  }
+
+  .floating-heart {
+    position: absolute;
+    bottom: 20%;
+    font-size: 24px;
+    animation: floatUp 2.5s ease-out forwards;
+  }
+
+  @keyframes floatUp {
+    0% {
+      opacity: 1;
+      transform: translateY(0) rotate(0deg) scale(0.5);
+    }
+    20% {
+      opacity: 1;
+      transform: translateY(-40px) rotate(15deg) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-200px) rotate(-20deg) scale(0.3);
+    }
+  }
+
+  // 脉冲动画
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+
+  // 滑动动画
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
