@@ -82,6 +82,14 @@ exports.main = async (event, context) => {
         };
       }
     } else {
+      // 3. 校验密码强度（字母加数字，不得小于8位）
+      const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+      if (!passwordRegex.test(password)) {
+        return {
+          success: false,
+          message: "密码格式不正确，必须包含字母和数字，且长度不少于8位",
+        };
+      }
       // 5. 用户不存在，自动注册
       const addResult = await usersCollection.add({
         data: {

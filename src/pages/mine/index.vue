@@ -65,7 +65,7 @@
       <!-- 功能列表 -->
       <view class="feature-section">
         <view class="feature-card">
-          <nut-cell
+          <!-- <nut-cell
             title="个人信息"
             is-link
             @click="handlePersonalInfo"
@@ -74,7 +74,7 @@
             <template #icon>
               <view class="cell-icon">👤</view>
             </template>
-          </nut-cell>
+</nut-cell> -->
           <nut-cell
             title="关于我们"
             is-link
@@ -85,7 +85,7 @@
               <view class="cell-icon">💕</view>
             </template>
           </nut-cell>
-          <nut-cell
+          <!-- <nut-cell
             title="设置"
             is-link
             @click="handleSettings"
@@ -94,7 +94,7 @@
             <template #icon>
               <view class="cell-icon">⚙️</view>
             </template>
-          </nut-cell>
+          </nut-cell> -->
         </view>
       </view>
     </view>

@@ -43,51 +43,56 @@
         :close-on-click-overlay="true"
         class="detail-dialog"
       >
-        <view class="detail-content">
-          <!-- 头部装饰 -->
-          <view class="detail-header">
-            <view class="emoji-icon">{{ selectedMemo?.type === 'couple' ? '❤️' : '📝' }}</view>
-            <text class="couple-tag">{{ selectedMemo?.type === 'couple' ? '我们的美好回忆' : '我的个人记忆' }}</text>
-          </view>
-
-          <!-- 内容区域 -->
-          <view class="detail-body">
-            <view class="content-section">
-              <text class="section-title">内容</text>
-              <view class="content-card">
-                <text class="content-text">{{ selectedMemo?.content }}</text>
-              </view>
+        <scroll-view
+          :scroll-y="true"
+          style="height: 36vh;"
+        >
+          <view class="detail-content">
+            <!-- 头部装饰 -->
+            <view class="detail-header">
+              <view class="emoji-icon">{{ selectedMemo?.type === 'couple' ? '❤️' : '📝' }}</view>
+              <text class="couple-tag">{{ selectedMemo?.type === 'couple' ? '我们的美好回忆' : '我的个人记忆' }}</text>
             </view>
 
-            <!-- 时间信息 -->
-            <view class="time-section">
-              <view class="time-item">
-                <view class="time-icon">⏰</view>
-                <view class="time-info">
-                  <text class="time-label">创建时间</text>
-                  <text class="time-value">{{ selectedMemo ? formatTime(selectedMemo.createTime) : '' }}</text>
+            <!-- 内容区域 -->
+            <view class="detail-body">
+              <view class="content-section">
+                <text class="section-title">内容</text>
+                <view class="content-card">
+                  <text class="content-text">{{ selectedMemo?.content }}</text>
                 </view>
               </view>
-              <view class="time-item">
-                <view class="time-icon">✅</view>
-                <view class="time-info">
-                  <text class="time-label">完成时间</text>
-                  <text class="time-value">{{ selectedMemo?.completedAt ?
-                    formatTime(dayjs(selectedMemo.completedAt).valueOf()) : '' }}</text>
+
+              <!-- 时间信息 -->
+              <view class="time-section">
+                <view class="time-item">
+                  <view class="time-icon">⏰</view>
+                  <view class="time-info">
+                    <text class="time-label">创建时间</text>
+                    <text class="time-value">{{ selectedMemo ? formatTime(selectedMemo.createTime) : '' }}</text>
+                  </view>
+                </view>
+                <view class="time-item">
+                  <view class="time-icon">✅</view>
+                  <view class="time-info">
+                    <text class="time-label">完成时间</text>
+                    <text class="time-value">{{ selectedMemo?.completedAt ?
+                      formatTime(dayjs(selectedMemo.completedAt).valueOf()) : '' }}</text>
+                  </view>
                 </view>
               </view>
-            </view>
 
-            <!-- 类型信息 -->
-            <view class="type-section">
-              <text class="type-label">类型</text>
-              <text
-                class="type-badge"
-                :class="{ couple: selectedMemo?.type === 'couple' }"
-              >{{ selectedMemo?.type === 'personal' ? '个人备忘录' : '情侣备忘录' }}</text>
+              <!-- 类型信息 -->
+              <view class="type-section">
+                <text class="type-label">类型</text>
+                <text
+                  class="type-badge"
+                  :class="{ couple: selectedMemo?.type === 'couple' }"
+                >{{ selectedMemo?.type === 'personal' ? '个人备忘录' : '情侣备忘录' }}</text>
+              </view>
             </view>
           </view>
-        </view>
+        </scroll-view>
         <template #footer>
           <nut-button
             type="primary"

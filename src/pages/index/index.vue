@@ -398,16 +398,16 @@ const romanticSuggestions = [
 // 计算属性
 const welcomeMessage = computed(() => {
   const hour = new Date().getHours()
-  let greeting = ''
-  if (hour >= 6 && hour < 12) {
-    greeting = timeGreetings.morning
-  } else if (hour >= 12 && hour < 18) {
-    greeting = timeGreetings.noon
+
+  if (hour >= 5 && hour < 9) {
+    return timeGreetings.morning
+  } else if (hour >= 12 && hour < 15) {
+    return timeGreetings.noon
+  } else if (hour >= 22) {
+    return timeGreetings.evening
   } else {
-    greeting = timeGreetings.evening
+    return welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)]
   }
-  const randomTip = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)]
-  return `${greeting} ${randomTip}`
 })
 
 const randomEmptyText = computed(() => {
