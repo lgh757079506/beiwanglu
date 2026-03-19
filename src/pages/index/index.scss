@@ -274,6 +274,12 @@
         color: #c44569;
         font-weight: 500;
         font-size: 13px;
+        line-height: 1;
+        padding: 6px 8px;
+
+        .nut-button__wrap view {
+          writing-mode: vertical-rl;
+        }
       }
     }
   }
@@ -448,6 +454,15 @@
         .tab-text {
           color: white;
           font-weight: 600;
+        }
+      }
+
+      &.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+
+        .tab-text {
+          color: #d4a5b5;
         }
       }
     }

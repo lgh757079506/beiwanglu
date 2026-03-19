@@ -108,8 +108,8 @@
         <view class="tab-divider"></view>
         <view
           class="tab-item"
-          :class="{ active: showCoupleMemos }"
-          @click="showCoupleMemos = true"
+          :class="{ active: showCoupleMemos, disabled: !coupleInfo }"
+          @click="coupleInfo && (showCoupleMemos = true)"
         >
           <text class="tab-icon">💑</text>
           <text class="tab-text">我们</text>
@@ -125,6 +125,7 @@
           :show-actions="true"
           :current-user-id="userInfo.userId"
           :empty-text="randomEmptyText"
+          timeTitle="计划完成时间"
           @edit="editMemo"
           @complete="handleComplete"
           @delete="deleteMemo"
@@ -173,7 +174,7 @@
         >
           <nut-form
             ref="formRef"
-            :model="formData"
+            :model-value="formData"
             :rules="rules"
             label-position="top"
           >
@@ -249,7 +250,7 @@
         <template #footer>
           <nut-button
             type="default"
-            @click="showAddDialog = false"
+            @click="handleCancel"
             class="dialog-btn cancel-btn"
           >取消</nut-button>
           <nut-button
@@ -286,10 +287,10 @@
 
 <script setup>
 import dayjs from 'dayjs'
-import { ref, onMounted, computed, onUnmounted } from 'vue'
-import Taro from '@tarojs/taro'
+import { ref, onMounted, computed, onUnmounted, watch } from 'vue'
+import Taro, { usePullDownRefresh } from '@tarojs/taro'
 import { useAuthStore } from '@/store/auth'
-import { getMemoList, addMemo, updateMemo, deleteMemo as deleteMemoApi } from '@/api/memo'
+import { getMemoList, addMemo, updateMemo, deleteMemo as deleteMemoApi, completeMemo } from '@/api/memo'
 import { getCoupleInfo, bindCouple as bindCoupleApi, unbindCouple as unbindCoupleApi, getCoupleMemos } from '@/api/couple'
 import LoveFloat from '@/components/love-float/index.vue'
 import MemoList from '@/components/memo-list/index.vue'
@@ -424,6 +425,7 @@ const onPullDownRefresh = async () => {
     Taro.stopPullDownRefresh()
   }
 }
+usePullDownRefresh(onPullDownRefresh)
 
 // 注册下拉刷新事件
 Taro.pageScrollTo({ scrollTop: 0 })
@@ -444,6 +446,14 @@ onMounted(async () => {
   initShake()
   checkStreak()
 })
+
+// 监听tab切换，重新加载数据
+watch(
+  () => showCoupleMemos.value,
+  async (newValue) => {
+    await loadMemos()
+  }
+)
 
 onUnmounted(() => {
   Taro.offAccelerometerChange()
@@ -640,10 +650,13 @@ const updateStreak = () => {
  */
 const loadCoupleInfo = async () => {
   try {
+    console.log('加载情侣信息...')
     const result = await getCoupleInfo({})
 
     if (result.success) {
       coupleInfo.value = result.data
+      // 将绑定信息存储到store
+      authStore.setCoupleInfo(result.data.coupleId, result.data.partnerId)
     }
   } catch (error) {
     console.error('加载情侣信息失败:', error)
@@ -711,6 +724,10 @@ const unbindCouple = async () => {
 
           if (result.success) {
             coupleInfo.value = null
+            // 清除store中的绑定信息
+            authStore.clearCoupleInfo()
+            // 切换回"我的"tab
+            showCoupleMemos.value = false
             Taro.showToast({
               title: '解除绑定成功',
               icon: 'success'
@@ -731,37 +748,56 @@ const loadMemos = async () => {
   try {
     let result
     if (showCoupleMemos.value && coupleInfo.value) {
-      result = await getCoupleMemos({})
+      result = await getMemoList({
+        type: 'couple',
+        isCompleted: false // 首页只显示未完成的备忘录
+      })
     } else {
-      result = await getMemoList({})
+      result = await getMemoList({
+        type: 'personal',
+        isCompleted: false // 首页只显示未完成的备忘录
+      })
     }
 
     if (result.success) {
+      // 转换时间格式并按计划完成时间升序排序
       memoList.value = result.data.map(item => ({
         ...item,
-        createTime: item.createdAt ? new Date(item.createdAt).getTime() : new Date().getTime()
-      }))
+        createTime: item.createdAt ? new Date(item.createdAt).getTime() : new Date().getTime(),
+        completeTimeTimestamp: item.completeTime ? new Date(item.completeTime).getTime() : Infinity
+      })).sort((a, b) => {
+        // 按计划完成时间升序排序，没有设置完成时间的排在最后
+        return a.completeTimeTimestamp - b.completeTimeTimestamp
+      })
     }
-    memoList.value = [
-      {
-        title: '一起去看电影',
-        content: '周末一起去看新上映的电影吧！记得买爆米花和可乐~',
-        createTime: dayjs().toDate().getTime(),
-        id: '123456'
-      },
-      {
-        title: '纪念日',
-        content: '下周三是我们的纪念日，别忘了准备惊喜！',
-        createTime: dayjs().toDate().getTime(),
-        id: '1234562'
-      },
-      {
-        title: '购物清单',
-        content: '需要买：牛奶、面包、水果、洗衣液',
-        createTime: dayjs().subtract(1, 'day').toDate().getTime(),
-        id: '12345622'
-      }
-    ]
+    // memoList.value = [
+    //   {
+    //     title: '一起去看电影',
+    //     content: '周末一起去看新上映的电影吧！记得买爆米花和可乐~',
+    //     createTime: dayjs().toDate().getTime(),
+    //     completeTime: dayjs().add(2, 'day').toDate().toISOString(),
+    //     id: '123456',
+    //     type: showCoupleMemos.value ? 'couple' : 'personal',
+    //     isCompleted: false
+    //   },
+    //   {
+    //     title: '纪念日',
+    //     content: '下周三是我们的纪念日，别忘了准备惊喜！',
+    //     createTime: dayjs().toDate().getTime(),
+    //     completeTime: dayjs().add(5, 'day').toDate().toISOString(),
+    //     id: '1234562',
+    //     type: showCoupleMemos.value ? 'couple' : 'personal',
+    //     isCompleted: false
+    //   },
+    //   {
+    //     title: '购物清单',
+    //     content: '需要买：牛奶、面包、水果、洗衣液',
+    //     createTime: dayjs().subtract(1, 'day').toDate().getTime(),
+    //     id: '12345622',
+    //     type: showCoupleMemos.value ? 'couple' : 'personal',
+    //     isCompleted: false
+    //   }
+    // ]
   } catch (error) {
     console.error('加载备忘录失败:', error)
   }
@@ -821,9 +857,11 @@ const handleSubmit = async () => {
 
   try {
     formRef.value.validate()
-      .then(async ({ valid }) => {
+      .then(async ({ valid, errors }) => {
         if (valid) {
           await saveMemo()
+        } else {
+          console.log('表单校验错误:', errors)
         }
       })
   } catch (error) {
@@ -835,14 +873,6 @@ const handleSubmit = async () => {
  * 保存备忘录
  */
 const saveMemo = async () => {
-  if (!userInfo.value.userId) {
-    Taro.showToast({
-      title: '请先登录',
-      icon: 'none'
-    })
-    return
-  }
-
   try {
     if (editingMemo.value) {
       const result = await updateMemo({
@@ -856,6 +886,14 @@ const saveMemo = async () => {
       if (result.success) {
         await loadMemos()
         showAddDialog.value = false
+        // 重置表单数据
+        editingMemo.value = null
+        formData.value = {
+          title: '',
+          content: '',
+          completeTime: '',
+          type: 'personal'
+        }
         updateStreak()
         Taro.showToast({
           title: '编辑成功 ✨',
@@ -873,6 +911,14 @@ const saveMemo = async () => {
       if (result.success) {
         await loadMemos()
         showAddDialog.value = false
+        // 重置表单数据
+        editingMemo.value = null
+        formData.value = {
+          title: '',
+          content: '',
+          completeTime: '',
+          type: 'personal'
+        }
         updateStreak()
         Taro.showToast({
           title: '添加成功 💖',
@@ -886,13 +932,41 @@ const saveMemo = async () => {
 }
 
 /**
+ * 处理取消操作
+ */
+const handleCancel = () => {
+  showAddDialog.value = false
+  // 重置表单数据
+  setTimeout(() => {
+    editingMemo.value = null
+    formData.value = {
+      title: '',
+      content: '',
+      completeTime: '',
+      type: 'personal'
+    }
+  }, 300)
+}
+
+/**
  * 完成备忘录
  */
-const handleComplete = (memo) => {
-  Taro.showToast({
-    title: '备忘录已标记为完成 ✔️',
-    icon: 'success'
-  })
+const handleComplete = async (memo) => {
+  try {
+    const result = await completeMemo({
+      id: memo._id || memo.id
+    })
+
+    if (result.success) {
+      await loadMemos()
+      Taro.showToast({
+        title: '备忘录已标记为完成 ✔️',
+        icon: 'success'
+      })
+    }
+  } catch (error) {
+    console.error('完成备忘录失败:', error)
+  }
 }
 
 /**

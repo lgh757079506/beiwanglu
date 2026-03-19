@@ -14,7 +14,7 @@
           v-if="showDate"
           class="date-header"
         >
-          <text class="date-text">{{ formatDate(date) }}</text>
+          <text class="date-text">{{ `${props.timeTitle}：` }}{{ formatDate(date) }}</text>
         </view>
 
         <!-- 备忘录列表 -->
@@ -32,7 +32,14 @@
             <view class="content-column">
               <!-- 标题和内容 -->
               <view class="content-body">
-                <text class="memo-title">{{ memo.title }}</text>
+                <view class="title-row">
+                  <text class="memo-title">{{ memo.title }}</text>
+                  <!-- 情侣备忘录标识 -->
+                  <text
+                    v-if="memo.type === 'couple'"
+                    class="couple-badge"
+                  >❤️ 我们的</text>
+                </view>
                 <text class="memo-content">{{ memo.content }}</text>
               </view>
 
@@ -123,6 +130,14 @@ const props = defineProps({
   height: {
     type: String,
     default: '100%'
+  },
+  timeTitle: {
+    type: String,
+    default: '时间'
+  },
+  sort: {
+    type: String,
+    default: 'up'
   }
 })
 
@@ -159,16 +174,29 @@ const groupedMemos = computed(() => {
   const groups = {}
 
   props.memos.forEach(memo => {
-    const date = dayjs(memo.createTime || memo.createdAt).format('YYYY-MM-DD')
+    let date
+    // 如果是已完成的备忘录，按完成时间分组；否则按创建时间分组
+    if (memo.isCompleted && memo.completedAt) {
+      date = dayjs(memo.completedAt).format('YYYY-MM-DD')
+    } else {
+      date = dayjs(memo.completeTime).format('YYYY-MM-DD')
+    }
     if (!groups[date]) {
       groups[date] = []
     }
+
     groups[date].push(memo)
   })
 
-  // 按日期降序排序
+  // 按日期升序排序
   const sortedGroups = {}
-  Object.keys(groups).sort((a, b) => dayjs(b).valueOf() - dayjs(a).valueOf()).forEach(date => {
+  Object.keys(groups).sort((a, b) => {
+    if (props.sort === 'up') {
+      return dayjs(a).valueOf() - dayjs(b).valueOf()
+    } else {
+      return dayjs(b).valueOf() - dayjs(a).valueOf()
+    }
+  }).forEach(date => {
     sortedGroups[date] = groups[date]
   })
   return sortedGroups
@@ -264,18 +292,34 @@ const formatTime = (timestamp) => {
             .content-body {
               margin-bottom: 18px;
 
+              .title-row {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 10px;
+
+                .couple-badge {
+                  font-size: 12px;
+                  color: #ff6b9d;
+                  background-color: rgba(255, 107, 157, 0.1);
+                  padding: 2px 6px;
+                  border-radius: 10px;
+                  font-weight: 500;
+                  white-space: nowrap;
+                }
+              }
+
               .memo-title {
                 font-size: 18px;
                 font-weight: 600;
                 color: $text-primary;
-                margin-bottom: 10px;
-                display: block;
                 line-height: 26px;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
+                flex: 1;
               }
 
               .memo-content {

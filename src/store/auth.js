@@ -7,12 +7,16 @@ export const useAuthStore = defineStore("auth", {
     userInfo: null,
     token: null,
     isLogin: false,
+    coupleId: null,
+    partnerId: null,
   }),
 
   getters: {
     getUserInfo: (state) => state.userInfo,
     getToken: (state) => state.token,
     getIsLogin: (state) => state.isLogin,
+    getCoupleId: (state) => state.coupleId,
+    getPartnerId: (state) => state.partnerId,
   },
 
   actions: {
@@ -85,12 +89,41 @@ export const useAuthStore = defineStore("auth", {
         };
         this.token = userInfo.token;
         this.isLogin = true;
+        this.coupleId = userInfo.coupleId || null;
+        this.partnerId = userInfo.partnerId || null;
       }
+      console.log("初始化登录状态:", this);
     },
 
     // 检查登录状态
     checkLogin() {
       return this.isLogin;
+    },
+
+    // 设置情侣信息
+    setCoupleInfo(coupleId, partnerId) {
+      this.coupleId = coupleId;
+      this.partnerId = partnerId;
+
+      // 保存到本地存储
+      const userInfo = Taro.getStorageSync("userInfo") || {};
+      Taro.setStorageSync("userInfo", {
+        ...userInfo,
+        coupleId,
+        partnerId,
+      });
+    },
+
+    // 清除情侣信息
+    clearCoupleInfo() {
+      this.coupleId = null;
+      this.partnerId = null;
+
+      // 更新本地存储
+      const userInfo = Taro.getStorageSync("userInfo") || {};
+      delete userInfo.coupleId;
+      delete userInfo.partnerId;
+      Taro.setStorageSync("userInfo", userInfo);
     },
   },
 });

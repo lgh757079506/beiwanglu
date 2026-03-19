@@ -12,7 +12,7 @@ const couplesCollection = db.collection("couples");
 
 // 云函数入口函数
 exports.main = async (event, context) => {
-  const { action, data, token } = event;
+  const { action, token, ...data } = event;
 
   try {
     // 调用common云函数根据token获取用户信息
@@ -52,7 +52,7 @@ exports.main = async (event, context) => {
     console.error("操作失败:", error);
     return {
       success: false,
-      message: "操作失败，请稍后重试",
+      message: `操作失败，请稍后重试: ${error}`,
     };
   }
 };
@@ -60,6 +60,18 @@ exports.main = async (event, context) => {
 // 绑定情侣关系
 async function bindCouple(data, userId) {
   const { partnerPhone } = data;
+
+  // 获取当前用户信息
+  const currentUserResult = await usersCollection.doc(userId).get();
+  const currentUser = currentUserResult.data;
+
+  // 检查是否绑定自己
+  if (currentUser.phone === partnerPhone) {
+    return {
+      success: false,
+      message: "不能绑定自己哦",
+    };
+  }
 
   // 查找 partner 用户
   const partnerResult = await usersCollection
@@ -161,6 +173,7 @@ async function getCouple(userId) {
     success: true,
     message: "获取成功",
     data: {
+      coupleId: couple._id,
       partnerId: partnerId,
       partnerPhone: partnerResult.data.phone,
     },

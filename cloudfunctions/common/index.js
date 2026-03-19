@@ -32,7 +32,7 @@ exports.main = async (event, context) => {
     console.error("操作失败:", error);
     return {
       success: false,
-      message: "操作失败，请稍后重试",
+      message: `操作失败，请稍后重试: ${error}`,
     };
   }
 };

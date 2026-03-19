@@ -111,8 +111,8 @@ import './index.scss'
 
 // 响应式数据
 const authStore = useAuthStore()
-const userInfo = computed(() => authStore.userInfo)
-const isLogin = computed(() => authStore.isLogin)
+const userInfo = computed(() => authStore.userInfo || {})
+const isLogin = computed(() => authStore.isLogin || false)
 
 /**
  * 页面加载时检查登录状态
@@ -141,6 +141,8 @@ const handleLogout = () => {
     success: async (res) => {
       if (res.confirm) {
         await authStore.logout()
+
+        authStore.initAuth()
         Taro.showToast({
           title: '退出成功',
           icon: 'success'

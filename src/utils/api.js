@@ -106,6 +106,22 @@ export const callApiWithToken = async (options) => {
         title: result.result.message || "操作失败",
         icon: "none",
       });
+
+      // 处理网络或其他错误
+      if (
+        result.result.message === "未登录" ||
+        result.result.message.includes("token")
+      ) {
+        // 跳转到登录页
+        Taro.reLaunch({
+          url: "/pages/login/index",
+        });
+      } else {
+        Taro.showToast({
+          title: result.result.message || "网络错误，请稍后重试",
+          icon: "none",
+        });
+      }
       // throw new Error(result.result.message || "操作失败");
       return result.result;
     }
@@ -125,6 +141,7 @@ export const callApiWithToken = async (options) => {
         icon: "none",
       });
     }
+
     throw error;
   }
 };

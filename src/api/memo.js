@@ -69,6 +69,22 @@ export const deleteMemo = async (params) => {
 };
 
 /**
+ * 完成备忘录
+ * @param {Object} params - 完成参数
+ * @param {string} params.id - 备忘录ID
+ * @returns {Promise} - 返回完成结果
+ */
+export const completeMemo = async (params) => {
+  return callApiWithToken({
+    name: "memo",
+    data: {
+      action: "complete",
+      ...params,
+    },
+  });
+};
+
+/**
  * 获取历史备忘录
  * @param {Object} params - 查询参数
  * @param {string} params.userId - 用户ID
