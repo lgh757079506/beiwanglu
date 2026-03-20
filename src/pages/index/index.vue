@@ -213,13 +213,38 @@
               <nut-cell
                 :title="formatDate(formData.completeTime) || '选择完成时间'"
                 is-link
-                @click="showDatePicker = true"
+                @click="openDatePicker"
                 class="date-cell"
               >
                 <template #icon>
                   <text class="cell-icon">🕐</text>
                 </template>
               </nut-cell>
+            </nut-form-item>
+
+            <nut-form-item
+              label="⏰ 提前提醒时间（分钟）"
+              prop="remindTime"
+              class="form-item"
+            >
+              <nut-input
+                v-model="formData.remindTime"
+                type="number"
+                placeholder="输入提醒时间，不设置则不提醒"
+                :border="false"
+                class="remind-input"
+              />
+              <view class="quick-select">
+                <nut-button
+                  v-for="time in quickRemindTimes"
+                  :key="time.value"
+                  size="mini"
+                  type="default"
+                  @click="selectQuickRemind(time.value)"
+                  :class="{ active: formData.remindTime == time.value }"
+                >{{ time.label
+                }}</nut-button>
+              </view>
             </nut-form-item>
             <nut-form-item
               label="🏷️ 备忘录类型"
@@ -271,11 +296,11 @@
         class="date-picker-popup"
       >
         <view class="picker-header">
-          <text class="picker-title">选择日期</text>
+          <text class="picker-title">选择日期时间</text>
         </view>
         <nut-date-picker
           v-model="formData.completeTime"
-          type="date"
+          type="datetime"
           :min-date="minDate"
           @confirm="showDatePicker = false"
           @cancel="showDatePicker = false"
@@ -303,10 +328,23 @@ const memoList = ref([])
 const showAddDialog = ref(false)
 const editingMemo = ref(null)
 const memoListRef = ref(null)
+
+// 快捷提醒时间选项
+const quickRemindTimes = ref([
+  { label: '15分钟', value: 15 },
+  { label: '30分钟', value: 30 },
+  { label: '1小时', value: 60 },
+  { label: '2小时', value: 120 },
+  { label: '半天', value: 720 },
+  { label: '1天', value: 1440 }
+])
+
+// 表单数据
 const formData = ref({
   title: '',
   content: '',
-  completeTime: '',
+  completeTime: null,
+  remindTime: '',
   type: 'personal'
 })
 
@@ -816,7 +854,14 @@ const formatTime = (timestamp) => {
  */
 const formatDate = (date) => {
   if (!date) return ''
-  return dayjs(date).format('YYYY年MM月DD日')
+  return dayjs(date).format('YYYY年MM月DD日 HH:mm')
+}
+
+/**
+ * 选择快捷提醒时间
+ */
+const selectQuickRemind = (value) => {
+  formData.value.remindTime = value
 }
 
 /**
@@ -827,7 +872,8 @@ const openAddDialog = () => {
   formData.value = {
     title: '',
     content: '',
-    completeTime: '',
+    completeTime: null,
+    remindTime: '',
     type: 'personal'
   }
   showDatePicker.value = false
@@ -842,11 +888,37 @@ const editMemo = (memo) => {
   formData.value = {
     title: memo.title,
     content: memo.content,
-    completeTime: memo.completeTime || '',
+    completeTime: memo.completeTime,
+    remindTime: memo.remindTime || '',
     type: memo.type || 'personal'
   }
   showDatePicker.value = false
   showAddDialog.value = true
+}
+
+/**
+ * 打开日期选择器
+ */
+const openDatePicker = () => {
+  showDatePicker.value = true
+}
+
+/**
+ * 请求订阅通知
+ */
+const requestSubscribeMessage = async () => {
+  try {
+    const res = await Taro.requestSubscribeMessage({
+      tmplIds: ['7x8ClIU_XGvd8WROzha6QkJTwPcvsGEFD3zQ4OPSA9k'],
+      fail: (err) => {
+        console.error('请求订阅通知失败:', err)
+      }
+    })
+    return res
+  } catch (error) {
+    console.error('请求订阅通知失败:', error)
+    return null
+  }
 }
 
 /**
@@ -859,6 +931,10 @@ const handleSubmit = async () => {
     formRef.value.validate()
       .then(async ({ valid, errors }) => {
         if (valid) {
+          // 如果设置了提醒时间，请求订阅通知
+          if (formData.value.remindTime && formData.value.remindTime > 0) {
+            await requestSubscribeMessage()
+          }
           await saveMemo()
         } else {
           console.log('表单校验错误:', errors)
@@ -880,6 +956,7 @@ const saveMemo = async () => {
         title: formData.value.title,
         content: formData.value.content,
         completeTime: formData.value.completeTime,
+        remindTime: formData.value.remindTime,
         type: formData.value.type
       })
 
@@ -892,6 +969,7 @@ const saveMemo = async () => {
           title: '',
           content: '',
           completeTime: '',
+          remindTime: '',
           type: 'personal'
         }
         updateStreak()
@@ -905,6 +983,7 @@ const saveMemo = async () => {
         title: formData.value.title,
         content: formData.value.content,
         completeTime: formData.value.completeTime,
+        remindTime: formData.value.remindTime,
         type: formData.value.type
       })
 
@@ -917,6 +996,7 @@ const saveMemo = async () => {
           title: '',
           content: '',
           completeTime: '',
+          remindTime: '',
           type: 'personal'
         }
         updateStreak()

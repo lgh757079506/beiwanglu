@@ -41,6 +41,14 @@
                   >❤️ 我们的</text>
                 </view>
                 <text class="memo-content">{{ memo.content }}</text>
+                <!-- 时间显示 -->
+                <view class="memo-time">
+                  <text class="time-text">
+                    {{ memo.isCompleted ? '完成时间：' : '截止时间：' }}
+                    {{ memo.isCompleted && memo.completedAt ? formatDateTime(memo.completedAt) :
+                      formatDateTime(memo.completeTime) }}
+                  </text>
+                </view>
               </view>
 
               <!-- 操作按钮 -->
@@ -211,6 +219,11 @@ const formatDate = (dateStr) => {
 const formatTime = (timestamp) => {
   return dayjs(timestamp).format('HH:mm:ss')
 }
+
+// 格式化日期时间
+const formatDateTime = (dateStr) => {
+  return dayjs(dateStr).format('YYYY-MM-DD HH:mm')
+}
 </script>
 
 <style lang="scss">
@@ -332,6 +345,22 @@ const formatTime = (timestamp) => {
                 display: -webkit-box;
                 -webkit-line-clamp: 3;
                 -webkit-box-orient: vertical;
+                margin-bottom: 12px;
+              }
+
+              .memo-time {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+
+                .time-text {
+                  font-size: 13px;
+                  color: $text-muted;
+                  background-color: rgba(255, 107, 157, 0.1);
+                  padding: 4px 10px;
+                  border-radius: 12px;
+                  border: 1px solid rgba(255, 107, 157, 0.2);
+                }
               }
             }
 
