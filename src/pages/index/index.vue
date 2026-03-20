@@ -801,6 +801,7 @@ const loadMemos = async () => {
       // 转换时间格式并按计划完成时间升序排序
       memoList.value = result.data.map(item => ({
         ...item,
+        completeTime: item.completeTime ? new Date(item.completeTime) : null,
         createTime: item.createdAt ? new Date(item.createdAt).getTime() : new Date().getTime(),
         completeTimeTimestamp: item.completeTime ? new Date(item.completeTime).getTime() : Infinity
       })).sort((a, b) => {
@@ -808,34 +809,6 @@ const loadMemos = async () => {
         return a.completeTimeTimestamp - b.completeTimeTimestamp
       })
     }
-    // memoList.value = [
-    //   {
-    //     title: '一起去看电影',
-    //     content: '周末一起去看新上映的电影吧！记得买爆米花和可乐~',
-    //     createTime: dayjs().toDate().getTime(),
-    //     completeTime: dayjs().add(2, 'day').toDate().toISOString(),
-    //     id: '123456',
-    //     type: showCoupleMemos.value ? 'couple' : 'personal',
-    //     isCompleted: false
-    //   },
-    //   {
-    //     title: '纪念日',
-    //     content: '下周三是我们的纪念日，别忘了准备惊喜！',
-    //     createTime: dayjs().toDate().getTime(),
-    //     completeTime: dayjs().add(5, 'day').toDate().toISOString(),
-    //     id: '1234562',
-    //     type: showCoupleMemos.value ? 'couple' : 'personal',
-    //     isCompleted: false
-    //   },
-    //   {
-    //     title: '购物清单',
-    //     content: '需要买：牛奶、面包、水果、洗衣液',
-    //     createTime: dayjs().subtract(1, 'day').toDate().getTime(),
-    //     id: '12345622',
-    //     type: showCoupleMemos.value ? 'couple' : 'personal',
-    //     isCompleted: false
-    //   }
-    // ]
   } catch (error) {
     console.error('加载备忘录失败:', error)
   }
@@ -959,7 +932,7 @@ const saveMemo = async () => {
         remindTime: formData.value.remindTime,
         type: formData.value.type
       })
-
+      console.log(222, formData.value.completeTime)
       if (result.success) {
         await loadMemos()
         showAddDialog.value = false

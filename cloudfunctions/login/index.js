@@ -14,6 +14,10 @@ const tokensCollection = db.collection("tokens");
 exports.main = async (event, context) => {
   const { action, phone, password } = event;
 
+  // 获取用户的openid
+  const wxContext = cloud.getWXContext();
+  const openid = wxContext.OPENID;
+
   // 处理退出登录
   if (action === "logout") {
     try {
@@ -74,6 +78,16 @@ exports.main = async (event, context) => {
       const user = userResult.data[0];
       if (user.password === password) {
         userId = user._id;
+
+        // 如果用户没有openid，更新openid
+        if (!user.openid) {
+          await usersCollection.doc(userId).update({
+            data: {
+              openid: openid,
+              updatedAt: new Date(),
+            },
+          });
+        }
       } else {
         // 密码错误
         return {
@@ -95,6 +109,7 @@ exports.main = async (event, context) => {
         data: {
           phone: phone,
           password: password,
+          openid: openid, // 存储用户的openid
           createdAt: new Date(),
           updatedAt: new Date(),
         },

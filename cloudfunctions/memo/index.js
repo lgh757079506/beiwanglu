@@ -89,6 +89,10 @@ async function addMemo(data, userId) {
       coupleId, // 存储绑定信息的id
       isCompleted: false, // 默认未完成状态
       completedAt: null, // 完成时间
+      completeTime: data.completeTime ? new Date(data.completeTime) : null, // 确保是Date对象
+      remindTime: data.remindTime ? Number(data.remindTime) : 0, // 确保是数字类型
+      isReminded: false, // 初始化为未提醒
+      remindedAt: null, // 提醒时间
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -146,6 +150,16 @@ async function updateMemo(data, userId) {
   await memoCollection.doc(id).update({
     data: {
       ...updateData,
+      completeTime: updateData.completeTime
+        ? new Date(updateData.completeTime)
+        : null,
+      remindTime:
+        updateData.remindTime !== undefined
+          ? Number(updateData.remindTime)
+          : undefined,
+      // 如果更新了完成时间或提醒时间，重置提醒状态
+      isReminded:
+        updateData.completeTime || updateData.remindTime ? false : undefined,
       updatedAt: new Date(),
     },
   });
